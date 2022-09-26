@@ -54,7 +54,7 @@ Project Organization
 
 --------
 
-# Model Card 2
+# Model Card
 
 ## Model Details
 
@@ -99,7 +99,7 @@ The model is a Natural Language Processing model.
 
 ## Intended Use
 
-he model is intended to be used for sentiment analysis, which given a dataset of messages or phrases in English, classifies them into 5 types of emotions.  
+The model is intended to be used for sentiment analysis, which given a dataset of messages or phrases in English, classifies them into 5 types of emotions.  
 
 ## Metrics
 
