@@ -45,6 +45,7 @@ def mlflow_metrics(y_val, y_pred):
 emotions_encoded = emotions.map(tokenize, batched=True, batch_size=None)
 
 num_labels = 6
+
 logger.info(f"Loading {model_name} model.")
 model = (AutoModelForSequenceClassification.from_pretrained(model_name, num_labels=num_labels).to(device))
 
@@ -80,6 +81,7 @@ with mlflow.start_run():
     results = trainer.evaluate()
 
     logger.info(f"Predicting {model_name} model.")
+
     preds_output = trainer.predict(emotions_encoded["validation"])
     preds_output.metrics
 
