@@ -1,5 +1,6 @@
 TAED2-Emotions
 ==============================
+[![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen)](https://github.com/PyCQA/pylint)
 
 We are the team that develops a model to classify some text input into a variety of emotions.
 
