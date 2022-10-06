@@ -1,4 +1,5 @@
 import sys
+from src.main import ETL
 
 REQUIRED_PYTHON = "python3"
 
@@ -19,6 +20,11 @@ def main():
                 required_major, sys.version))
     else:
         print(">>> Development environment passes all tests!")
+
+    # Execute the ETL task for our code.
+    ETL()
+
+    
 
 
 if __name__ == '__main__':

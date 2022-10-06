@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/danig/OneDrive/Escritorio/Uni/Q7/TAED2/TAED2-Emotions/mlruns/0/f2e82e378ed142ceb7cf80b33fcf1cc2/artifacts
+end_time: 1665056926857
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+name: ''
+run_id: f2e82e378ed142ceb7cf80b33fcf1cc2
+run_uuid: f2e82e378ed142ceb7cf80b33fcf1cc2
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1665056861790
+status: 4
+tags: []
+user_id: danig

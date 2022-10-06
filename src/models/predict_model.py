@@ -14,17 +14,27 @@ from transformers import AutoModelForSequenceClassification
 logging.basicConfig(level=logging.WARN)
 logger = logging.getLogger(__name__)
 
-## NOT CURRENTLY WORKING 
-with mlflow.start_run():
+def mlflow_metrics(y_val, y_pred):
+    f1 = f1_score(y_val, y_pred, average="weighted")
+    acc = accuracy_score(y_val, y_pred)
+    rec = recall_score(y_val, y_pred, average="weighted")
+    return {"accuracy": acc, "f1": f1, "recall": rec}
 
-    preds_output = trainer.predict(emotions_encoded["validation"])
-    preds_output.metrics
+def predict_model(model, dataset):
 
-    y_valid = np.array(emotions_encoded["validation"]["label"])
-    y_preds = np.argmax(preds_output.predictions, axis=1)
+    with mlflow.start_run():
+        logger.info(f"Executing predictions.")
 
-    metrics = mlflow_metrics(y_valid, y_preds)
+        preds_output = model.predict(dataset["validation"])
+        preds_output.metrics
 
-    mlflow.log_metric("accuracy_score",  metrics['accuracy'])
-    mlflow.log_metric("f1_score",  metrics['f1'])
-    mlflow.log_metric("recall", metrics['recall'])
+        y_valid = np.array(dataset["validation"]["label"])
+        y_preds = np.argmax(preds_output.predictions, axis=1)
+
+        metrics = mlflow_metrics(y_valid, y_preds)
+
+        mlflow.log_metric("accuracy_score",  metrics['accuracy'])
+        mlflow.log_metric("f1_score",  metrics['f1'])
+        mlflow.log_metric("recall", metrics['recall'])
+    
+    return metrics

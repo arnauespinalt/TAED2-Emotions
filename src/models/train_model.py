@@ -14,19 +14,6 @@ from transformers import AutoModelForSequenceClassification
 logging.basicConfig(level=logging.WARN)
 logger = logging.getLogger(__name__)
 
-#Loading dataset emotion
-
-logger.info("Loading Emotion dataset.")
-emotions = load_dataset("emotion")
-
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-
-model_name = "bert-base-uncased"
-tokenizer = AutoTokenizer.from_pretrained(model_name)
-
-def tokenize(batch):
-    return tokenizer(batch["text"], padding=True, truncation=True)
 
 def compute_metrics(pred):
     labels = pred.label_ids
@@ -36,75 +23,56 @@ def compute_metrics(pred):
     rec = recall_score(labels, preds, average="weighted")
     return {"accuracy": acc, "f1": f1, "recall": rec}
 
-def mlflow_metrics(y_val, y_pred):
-    f1 = f1_score(y_val, y_pred, average="weighted")
-    acc = accuracy_score(y_val, y_pred)
-    rec = recall_score(y_val, y_pred, average="weighted")
-    return {"accuracy": acc, "f1": f1, "recall": rec}
 
-emotions_encoded = emotions.map(tokenize, batched=True, batch_size=None)
+def train_model(dataset):
 
-num_labels = 6
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-logger.info(f"Loading {model_name} model.")
-model = (AutoModelForSequenceClassification.from_pretrained(model_name, num_labels=num_labels).to(device))
+    model_name = "bert-base-uncased"
 
-emotions_encoded["train"].features
-emotions_encoded.set_format("torch", columns=["input_ids", "attention_mask", "label"])
-emotions_encoded["train"].features
+    num_labels = 6
 
-batch_size = 64
-logging_steps = len(emotions_encoded["train"]) // batch_size
-training_args = TrainingArguments(output_dir="results",
-                                  num_train_epochs=8,
-                                  learning_rate=2e-5,
-                                  per_device_train_batch_size=batch_size,
-                                  per_device_eval_batch_size=batch_size,
-                                  load_best_model_at_end=False,
-                                  metric_for_best_model="f1",
-                                  weight_decay=0.01,
-                                  evaluation_strategy="epoch",
-                                  save_strategy="no",
-                                  disable_tqdm=False)
+    logger.info(f"Loading {model_name} model.")
+    model = (AutoModelForSequenceClassification.from_pretrained(model_name, num_labels=num_labels).to(device))
+
+    batch_size = 64
+    logging_steps = len(dataset["train"]) // batch_size
+    training_args = TrainingArguments(output_dir="results",
+                                    num_train_epochs=8,
+                                    learning_rate=2e-5,
+                                    per_device_train_batch_size=batch_size,
+                                    per_device_eval_batch_size=batch_size,
+                                    load_best_model_at_end=False,
+                                    metric_for_best_model="f1",
+                                    weight_decay=0.01,
+                                    evaluation_strategy="epoch",
+                                    save_strategy="no",
+                                    disable_tqdm=False)
 
 
-trainer = Trainer(model=model, args=training_args,
-                  compute_metrics=compute_metrics,
-                  train_dataset=emotions_encoded["train"],
-                  eval_dataset=emotions_encoded["validation"])
+    trainer = Trainer(model=model, args=training_args,
+                    compute_metrics=compute_metrics,
+                    train_dataset=dataset["train"],
+                    eval_dataset=dataset["validation"])
 
-with mlflow.start_run():
-    
-    logger.info(f"Training {model_name} model with arguments: {training_args}.")
-    trainer.train()
+    with mlflow.start_run():
+        
+        logger.info(f"Training {model_name} model with arguments: {training_args}.")
+        #trainer.train()
 
-    results = trainer.evaluate()
+        results = trainer.evaluate()
 
-    logger.info(f"Predicting {model_name} model.")
+        return trainer, results
 
-    preds_output = trainer.predict(emotions_encoded["validation"])
-    preds_output.metrics
+        tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
 
-    y_valid = np.array(emotions_encoded["validation"]["label"])
-    y_preds = np.argmax(preds_output.predictions, axis=1)
+        if tracking_url_type_store != "file":
 
-    metrics = mlflow_metrics(y_valid, y_preds)
+                mlflow.sklearn.log_model(model, "model", registered_model_name="Distil-Bert-Uncased-Emotions")
+        else:
+                mlflow.sklearn.log_model(model, "model")
 
-    mlflow.log_metric("accuracy_score",  metrics['accuracy'])
-    mlflow.log_metric("f1_score",  metrics['f1'])
-    mlflow.log_metric("recall", metrics['recall'])
 
-    tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
-
-    if tracking_url_type_store != "file":
-
-            # Register the model
-            # There are other ways to use the Model Registry, which depends on the use case,
-            # please refer to the doc for more information:
-            # https://mlflow.org/docs/latest/model-registry.html#api-workflow
-            mlflow.sklearn.log_model(model, "model", registered_model_name="Distil-Bert-Uncased-Emotions")
-    else:
-            mlflow.sklearn.log_model(model, "model")
 
 
 
