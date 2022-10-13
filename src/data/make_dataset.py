@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
-from pathlib import Path
 from datasets import load_dataset 
-import torch
 from transformers import AutoTokenizer
 
 logger = logging.getLogger(__name__)

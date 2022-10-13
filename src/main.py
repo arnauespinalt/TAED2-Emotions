@@ -14,18 +14,21 @@ def ETL():
     
     tracker1 = EmissionsTracker(project_name = "Loading dataset", measure_power_secs=30) #, outuput_dir = Users/onaclara/Desktop/TAED2/LAB/TAED2-Emotions, emissions_endpoint = https://github.com/DaniGmzGnz/TAED2-Emotions/blob/develop/README.md)
     tracker1.start()
+
     # Load and transform the dataset.
     dataset = load("emotion")
     emissions1: float = tracker1.stop()
 
     tracker2 = EmissionsTracker(project_name = "Training model", measure_power_secs=200)
     tracker2.start()
+
     # Load the pre-trained model and fine-tune it with the dataset to do a classification task.
     model, results = train_model(dataset)
     emissions2: float = tracker2.stop()
 
     tracker3 = EmissionsTracker(project_name = "Prediction", measure_power_secs=200)
     tracker3.start()
+
     # Execute some predictions with the new fine-tuned model.
     metrics = predict_model(model, dataset)
     logger.info(f"The accuracy of the model is {metrics['accuracy']}")
@@ -34,9 +37,15 @@ def ETL():
 
     tracker4 = EmissionsTracker(project_name = "Visualizing metrics", measure_power_secs=30)
     tracker4.start()
+
     # Do some visualization for the metrics.
     plots(metrics)
     emissions4: float = tracker4.stop()
+
+    logger.info(f"Load Dataset Emissions: {emissions1}")
+    logger.info(f"Fine-tuning Emissions: {emissions1}")
+    logger.info(f"Predicting Emissions: {emissions1}")
+    logger.info(f"Visualization Emissions: {emissions1}")
 
     print("EMISSION RESULTS OF EACH STEP:")
     print("1. Loading dataset emissions:", emissions1)

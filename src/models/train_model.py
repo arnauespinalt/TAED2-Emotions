@@ -1,12 +1,8 @@
 # -*- coding: utf-8 -*-
-import numpy as np
 import mlflow
 import mlflow.sklearn
 import logging
-from urllib.parse import urlparse
-from datasets import load_dataset 
 import torch
-from transformers import AutoTokenizer
 from sklearn.metrics import accuracy_score, f1_score, recall_score
 from transformers import Trainer, TrainingArguments
 from transformers import AutoModelForSequenceClassification
@@ -62,15 +58,15 @@ def train_model(dataset):
 
         results = trainer.evaluate()
 
+        # tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
+
+        # if tracking_url_type_store != "file":
+
+        #         mlflow.sklearn.log_model(model, "model", registered_model_name="Distil-Bert-Uncased-Emotions")
+        # else:
+        #         mlflow.sklearn.log_model(model, "model")
+        
         return trainer, results
-
-        tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
-
-        if tracking_url_type_store != "file":
-
-                mlflow.sklearn.log_model(model, "model", registered_model_name="Distil-Bert-Uncased-Emotions")
-        else:
-                mlflow.sklearn.log_model(model, "model")
 
 
 

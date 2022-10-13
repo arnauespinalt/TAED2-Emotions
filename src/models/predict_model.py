@@ -3,12 +3,7 @@ import numpy as np
 import mlflow
 import mlflow.sklearn
 import logging
-from urllib.parse import urlparse
-import torch
-from transformers import AutoTokenizer
 from sklearn.metrics import accuracy_score, f1_score, recall_score
-from transformers import Trainer, TrainingArguments
-from transformers import AutoModelForSequenceClassification
 
 
 logging.basicConfig(level=logging.WARN)
@@ -23,7 +18,7 @@ def mlflow_metrics(y_val, y_pred):
 def predict_model(model, dataset):
 
     with mlflow.start_run():
-        logger.info(f"Executing predictions.")
+        logger.info("Executing predictions.")
 
         preds_output = model.predict(dataset["validation"])
         preds_output.metrics
@@ -36,5 +31,10 @@ def predict_model(model, dataset):
         mlflow.log_metric("accuracy_score",  metrics['accuracy'])
         mlflow.log_metric("f1_score",  metrics['f1'])
         mlflow.log_metric("recall", metrics['recall'])
-    
+
     return metrics
+
+
+
+
+
