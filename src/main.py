@@ -1,7 +1,7 @@
 
 from src.data.make_dataset import load
-from src.models.train_model import train_model
-from src.models.predict_model import predict_model
+from src.scripts.train_model import train_model
+from src.scripts.predict_model import predict_model
 from src.visualization.visualize import plots
 import logging
 from codecarbon import EmissionsTracker
