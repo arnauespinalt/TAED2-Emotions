@@ -1,42 +1,43 @@
-# -*- coding: utf-8 -*-
-import numpy as np
-import mlflow
-import mlflow.sklearn
+'''
+-*- coding: utf-8 -*-
+'''
 import logging
 from urllib.parse import urlparse
-from datasets import load_dataset 
+import mlflow
+import mlflow.sklearn
 import torch
-from transformers import AutoTokenizer
+from transformers import Trainer, TrainingArguments, \
+    AutoModelForSequenceClassification
 from sklearn.metrics import accuracy_score, f1_score, recall_score
-from transformers import Trainer, TrainingArguments
-from transformers import AutoModelForSequenceClassification
 
 logging.basicConfig(level=logging.WARN)
 logger = logging.getLogger(__name__)
 
 
 def compute_metrics(pred):
+    '''Computes the following metrics: f1-score, accuracy and recall. '''
     labels = pred.label_ids
     preds = pred.predictions.argmax(-1)
-    f1 = f1_score(labels, preds, average="weighted")
+    f_score = f1_score(labels, preds, average="weighted")
     acc = accuracy_score(labels, preds)
     rec = recall_score(labels, preds, average="weighted")
-    return {"accuracy": acc, "f1": f1, "recall": rec}
+    return {"accuracy": acc, "f1": f_score, "recall": rec}
 
 
 def train_model(dataset):
-
+    '''
+    Trains the model.
+    '''
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     model_name = "bert-base-uncased"
 
-    num_labels = 6
-
     logger.info(f"Loading {model_name} model.")
-    model = (AutoModelForSequenceClassification.from_pretrained(model_name, num_labels=num_labels).to(device))
+
+    model = (AutoModelForSequenceClassification.from_pretrained(model_name,
+        num_labels=6).to(device))
 
     batch_size = 64
-    logging_steps = len(dataset["train"]) // batch_size
     training_args = TrainingArguments(output_dir="results",
                                     num_train_epochs=8,
                                     learning_rate=2e-5,
@@ -56,7 +57,6 @@ def train_model(dataset):
                     eval_dataset=dataset["validation"])
 
     with mlflow.start_run():
-        
         logger.info(f"Training {model_name} model with arguments: {training_args}.")
         #trainer.train()
 
@@ -67,12 +67,7 @@ def train_model(dataset):
         tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
 
         if tracking_url_type_store != "file":
-
-                mlflow.sklearn.log_model(model, "model", registered_model_name="Distil-Bert-Uncased-Emotions")
+            mlflow.sklearn.log_model(model, "model",
+                registered_model_name="Distil-Bert-Uncased-Emotions")
         else:
-                mlflow.sklearn.log_model(model, "model")
-
-
-
-
-
+            mlflow.sklearn.log_model(model, "model")
