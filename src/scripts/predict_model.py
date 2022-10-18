@@ -19,15 +19,6 @@ def mlflow_metrics(y_val, y_pred):
     return {"accuracy": acc, 
             "f1": f1, 
             "recall": rec}
-    fpr, tpr, threshold = metrics.roc_curve(y_val, y_pred)
-    roc_auc = metrics.auc(fpr, tpr)
-
-    return {"accuracy": acc, 
-            "f1": f1, 
-            "recall": rec, 
-            "roc_auc": roc_auc,
-            "fpr": fpr,
-            "tpr": tpr}
 
 
 def predict_model(model, dataset):
