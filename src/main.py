@@ -64,7 +64,6 @@ def predict(sentence):
 
     with open('models/model/bert-base-uncased-emotion/config.json') as f:
         data = json.load(f)
-        print(data['model'])
         result = predict_sentence(model, data['model'], sentence)
 
     print(result)

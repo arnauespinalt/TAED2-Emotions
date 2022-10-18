@@ -2,6 +2,8 @@ import sys
 from src.main import ETL, predict
 from fastapi import FastAPI
 import warnings
+from codecarbon import EmissionsTracker
+
 
 app = FastAPI()
 
@@ -11,8 +13,8 @@ REQUIRED_PYTHON = "python3"
 async def read_root():
     return {"Currently": "Running"}
 
-@app.get("/")
-def main(task = 'predict'):
+@app.get("/{sentence}")
+def main(sentence, task = 'predict'):
     system_major = sys.version_info.major
     if REQUIRED_PYTHON == "python":
         required_major = 2
@@ -34,11 +36,15 @@ def main(task = 'predict'):
 
     elif task=='predict': 
         # Execute the prediction of a given sentence.
-        sentence = input('Enter your sentence to predict: ')
+        # sentence = input('Enter your sentence to predict: ')
         if sentence is None:
             warnings.warn("If you want to predict, you must give a sentence with the argument --sentence='Your sentence'")
         else: 
+            tracker2 = EmissionsTracker(project_name = "Predict a sentence", measure_power_secs=200)
+            tracker2.start()
             res = predict(sentence)
+            emissions: float = tracker2.stop()
+            print(f"Emissions on predicting a sentence: {emissions}")
             return {sentence: res}
     else: 
         warnings.warn("Not a valid task.")
