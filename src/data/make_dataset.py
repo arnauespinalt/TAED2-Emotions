@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
-from pathlib import Path
 from datasets import load_dataset 
-import torch
 from transformers import AutoTokenizer
 
 logger = logging.getLogger(__name__)
@@ -25,7 +23,6 @@ def load(dataset_name: str):
 
     logger.info("Loading Emotion dataset.")
     emotions = load_dataset(dataset_name)
-
     emotions_encoded = emotions.map(tokenize, batched=True, batch_size=None)
 
     logger.info("Formatting dataset.")
