@@ -1,18 +1,23 @@
-
+'''
+Documentation
+'''
+import logging
+from codecarbon import EmissionsTracker
 from src.data.make_dataset import load
 from src.models.train_model import train_model
 from src.models.predict_model import predict_model
 from src.visualization.visualize import plots
-import logging
-from codecarbon import EmissionsTracker
+
 
 logging.basicConfig(level=logging.WARN)
 logger = logging.getLogger(__name__)
 
-def ETL():
-    # We will track CO2 emissions for each step of our pipeline
-    
-    tracker1 = EmissionsTracker(project_name = "Loading dataset", measure_power_secs=30) #, outuput_dir = Users/onaclara/Desktop/TAED2/LAB/TAED2-Emotions, emissions_endpoint = https://github.com/DaniGmzGnz/TAED2-Emotions/blob/develop/README.md)
+def mainfunction():
+    '''Main function which calls the train_model function and 
+    computes de carbon emissions of the code. '''
+    tracker1 = EmissionsTracker(project_name = "Loading dataset",
+            measure_power_secs=30)  #outuput_dir = Users/onaclara/Desktop/TAED2/LAB/TAED2-Emotions
+                                    #emissions_endpoint = https://github.com/DaniGmzGnz/TAED2-Emotions/blob/develop/README.md)
     tracker1.start()
     # Load and transform the dataset.
     dataset = load("emotion")
@@ -21,7 +26,7 @@ def ETL():
     tracker2 = EmissionsTracker(project_name = "Training model", measure_power_secs=200)
     tracker2.start()
     # Load the pre-trained model and fine-tune it with the dataset to do a classification task.
-    model, results = train_model(dataset)
+    model, _ = train_model(dataset)
     emissions2: float = tracker2.stop()
 
     tracker3 = EmissionsTracker(project_name = "Prediction", measure_power_secs=200)
