@@ -3,6 +3,7 @@ from src.data.make_dataset import load
 from src.scripts.train_model import train_model
 from src.scripts.predict_model import predict_model
 from src.visualization.visualize import predict_sentence
+from src.visualization.visualize import plots
 import logging
 from codecarbon import EmissionsTracker
 import json

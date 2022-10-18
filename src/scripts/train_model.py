@@ -63,14 +63,16 @@ def train_model(dataset, train = True):
 
         # tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
 
-        # if tracking_url_type_store != "file":
+        # tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
+
+       # if tracking_url_type_store != "file":
 
         #         mlflow.sklearn.log_model(model, "model", registered_model_name="Distil-Bert-Uncased-Emotions")
         # else:
         #         mlflow.sklearn.log_model(model, "model")
 
         trainer.save_model('models/model')
-        
+      
         return trainer, results
 
 

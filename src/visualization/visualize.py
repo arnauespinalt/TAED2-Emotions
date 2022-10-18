@@ -4,6 +4,7 @@ import torch
 from transformers import AutoTokenizer
 from transformers import pipeline
 
+import matplotlib.pyplot as plt
 
 model_name = "bert-base-uncased"
 tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -26,5 +27,3 @@ def predict_sentence(model, config, sentence):
 
     print(res)
     return res
-
-
