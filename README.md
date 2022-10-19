@@ -152,7 +152,15 @@ This datasets allow us to use the model for a Sentiment Analysis task in which w
 [None]
 
 ## Ethical consideration
-[None]
+Co2_eq_emissions:
+- Emissions: 43,24 kg Co2
+    -- Loading dataset: 4,3e-4 kg Co2
+    -- Training: 42,17 kg Co2
+    -- Evaluation: 1,07 kg Co2
+- Source: code carbon
+- Training_type: fine-tuning
+- Geographical_location: Barcelona, Catalonia
+- Hardware_used: 8 CPUs and 0 GPUs, 16Gb ram/cpu, Cpu model: Intel(R) Core(TM) i7-10510U CPU @ 1.80GHz
 
 ## Caveats and recommendations
 [None]
