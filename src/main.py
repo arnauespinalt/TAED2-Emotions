@@ -34,7 +34,7 @@ def ETL():
     # Execute some predictions with the new fine-tuned model.
     metrics = predict_model(model, dataset)
     logger.info(f"The accuracy of the model is {metrics['accuracy']}")
-    print(metrics)
+    print(metrics)  
     emissions3: float = tracker3.stop()
 
     tracker4 = EmissionsTracker(project_name = "Visualizing metrics", measure_power_secs=30)

@@ -14,7 +14,7 @@ async def read_root():
     return {"Currently": "Running"}
 
 @app.get("/{sentence}")
-def main(sentence, task = 'predict'):
+def main(task = 'predict', sentence = None):
     system_major = sys.version_info.major
     if REQUIRED_PYTHON == "python":
         required_major = 2
